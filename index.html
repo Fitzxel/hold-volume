@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hold volume</title>
+    <style>
+        * {
+            margin: 0;
+            user-select: none;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: monospace;
+            background-color: #5f1da7;
+        }
+        header {
+            padding-top: 10px;
+            text-align: center;
+            color: #00ffff;
+        }
+        header h2 {
+            margin-bottom: 10px;
+        }
+        header a {
+            color: #fbff00;
+        }
+        #click {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 80px auto;
+            border-radius: 50%;
+            background-color: #ededed;
+            overflow: hidden;
+        }
+        #click > h2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: max-content;
+            z-index: 1;
+        }
+        #play {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            background-color: inherit;
+            z-index: 2;
+            cursor: pointer;
+        }
+        #pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: #ff0000;
+            transition: .2s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hold volume!</h1>
+        <h2>Vol. 90%</h2>
+        <h3>Playing: <a href="https://www.youtube.com/watch?v=jntretGew0s" target="_blank">Animals (8-Bit NES Remix)</a></h3>
+    </header>
+    <div id="click">
+        <div id="play">
+            <h2>▶ Play!</h2>
+        </div>
+        <h2>Click to hold!</h2>
+        <div id="pulse"></div>
+    </div>
+    <audio src="Animals (8-Bit NES Remix).mp3"></audio>
+    <script>
+        const audio = document.querySelector('audio');
+        let volume = 10;
+        audio.volume = volume/100;
+
+        audio.addEventListener('volumechange', ()=> {
+            document.querySelector('h2').textContent = `Vol. ${Math.floor(audio.volume*100)}%`;
+            document.querySelector('#pulse').style.transform = `translate(-50%, -50%) scale(${volume/100})`;
+        });
+        audio.addEventListener('play', ()=> {
+            document.querySelector('#play').style.display = 'none';
+        });
+        audio.addEventListener('ended', ()=> {
+            audio.play();
+        });
+
+        document.querySelector('#click').addEventListener('click', ()=> {
+            if (audio.paused) {
+                audio.play();
+            }
+            if (volume < 96) {
+                volume+= 5;
+
+                audio.volume = volume/100;
+            }
+        });
+
+        setInterval(() => {
+            if (volume > 10) {
+                volume-= 1;
+
+                audio.volume = volume/100;
+            }
+        }, 100);
+    </script>
+</body>
+</html>
